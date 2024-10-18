@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speech Recognition</title>
+<style>
+body {
+font-family: 'Poppins', sans-serif;
+text-align: center;
+margin-top: 100px;
+background-color: #f4f4f4;
+}
+h1 {
+font-size: 36px;
+color: #333;
+margin-bottom: 40px;
+}
+.container {
+display: inline-block;
+background: white;
+padding: 20px 30px;
+border-radius: 12px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+#speechText {
+font-size: 22px;
+font-weight: 500;
+margin-top: 20px;
+color: #555;
+}
+.btn-container {
+margin-top: 30px;
+}
+button {
+padding: 12px 25px;
+font-size: 18px;
+cursor: pointer;
+border: none;
+border-radius: 8px;
+margin: 0 10px;
+transition: background-color 0.3s ease;
+
+}
+#startRecognition {
+background-color: #007bff;
+color: white;
+}
+#stopRecognition {
+background-color: #dc3545;
+color: white;
+}
+button:hover {
+opacity: 0.8;
+}
+footer {
+margin-top: 50px;
+font-size: 14px;
+color: #aaa;
+}
+</style>
+</head>
+<body>
+<h1>Speech Recognition System</h1>
+<div class="container">
+<p id="speechText">Your speech will appear here...</p>
+<div class="btn-container">
+<button id="startRecognition">Start Listening</button>
+<button id="stopRecognition">Stop Listening</button>
+</div>
+</div>
+<footer>
+<p>Powered by Web Speech API</p>
+</footer>
+<script>
+const startButton = document.getElementById("startRecognition");
+const stopButton = document.getElementById("stopRecognition");
+const speechText = document.getElementById("speechText");
+// Check if the browser supports the Web Speech API
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+const SpeechRecognition = window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+// Set up the recognition properties
+
+recognition.lang = 'en-US'; // Set language
+recognition.interimResults = false; // Get only final results
+recognition.maxAlternatives = 1; // Maximum number of alternative transcripts
+startButton.addEventListener('click', () => {
+recognition.start();
+speechText.textContent = 'Listening...';
+});
+// Stop recognition when "Stop Listening" is clicked
+stopButton.addEventListener('click', () => {
+recognition.stop();
+speechText.textContent += ' (Recognition stopped)';
+});
+// Handle recognition results
+recognition.onresult = (event) => {
+const transcript = event.results[0][0].transcript;
+speechText.textContent = `You said: "${transcript}"`; // Fixed line
+};
+// Handle recognition errors
+recognition.onerror = (event) => {
+speechText.textContent = 'Error occurred in recognition: ' + event.error;
+};
+// Handle when the recognition ends automatically
+recognition.onend = () => {
+speechText.textContent += ' (Recognition ended)';
+};
+} else {
+speechText.textContent = 'Sorry, your browser does not support speech recognition.';
+}
+</script>
+</body>
+</html>
